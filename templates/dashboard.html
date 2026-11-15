@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<h3 class="mb-4">Dashboard</h3>
+<div class="row g-3 mb-4">
+  <div class="col-6 col-lg-3"><div class="card stat-card bg-c1 p-3"><div>Total Products</div><div class="num">{{ stats.products }}</div></div></div>
+  <div class="col-6 col-lg-3"><div class="card stat-card bg-c2 p-3"><div>Total Customers</div><div class="num">{{ stats.customers }}</div></div></div>
+  <div class="col-6 col-lg-3"><div class="card stat-card bg-c3 p-3"><div>Total Orders</div><div class="num">{{ stats.orders }}</div></div></div>
+  <div class="col-6 col-lg-3"><div class="card stat-card bg-c4 p-3"><div>Available Stock</div><div class="num">{{ stats.stock }}</div></div></div>
+</div>
+<div class="row g-3">
+  <div class="col-lg-7">
+    <div class="card p-3">
+      <h5>Recent Orders</h5>
+      <table class="table table-sm align-middle">
+        <thead><tr><th>#</th><th>Customer</th><th>Date</th><th>Total</th><th>Status</th></tr></thead>
+        <tbody>
+        {% for o in recent %}
+          <tr><td><a href="{{ url_for('order_detail', oid=o.order_id) }}">{{ o.order_id }}</a></td>
+              <td>{{ o.customer_name }}</td><td>{{ o.order_date.strftime('%d %b %Y %H:%M') }}</td>
+              <td>₹{{ o.total_amount }}</td><td><span class="badge bg-success">{{ o.status }}</span></td></tr>
+        {% else %}<tr><td colspan="5" class="text-muted">No orders yet.</td></tr>{% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="col-lg-5">
+    <div class="card p-3 mb-3">
+      <h5>Products per Category</h5>
+      <canvas id="catChart" height="180"></canvas>
+    </div>
+    <div class="card p-3">
+      <h5>⚠ Low Stock (&lt; 10)</h5>
+      <ul class="mb-0">
+        {% for p in low %}<li>{{ p.product_name }} — <b>{{ p.stock_quantity }}</b> left</li>
+        {% else %}<li class="text-muted">All products are well stocked.</li>{% endfor %}
+      </ul>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<script>
+  new Chart(document.getElementById('catChart'), {
+    type: 'bar',
+    data: { labels: {{ chart | map(attribute='category_name') | list | tojson }},
+            datasets: [{ label: 'Products', data: {{ chart | map(attribute='n') | list | tojson }}, backgroundColor: '#5e35b1' }] },
+    options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } }
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,7 @@
+body { background: #f4f6fb; }
+.app-nav { background: linear-gradient(90deg, #3f51b5, #5e35b1); }
+.stat-card { border: 0; border-radius: 14px; color: #fff; box-shadow: 0 4px 12px rgba(0,0,0,.1); }
+.stat-card .num { font-size: 2rem; font-weight: 700; }
+.bg-c1 { background: #3f51b5; } .bg-c2 { background: #00897b; }
+.bg-c3 { background: #f57c00; } .bg-c4 { background: #8e24aa; }
+.card { border: 0; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,.06); }

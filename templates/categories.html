@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Categories{% endblock %}
+{% block content %}
+<h3 class="mb-3">Categories</h3>
+<div class="row g-3">
+  <div class="col-lg-4"><div class="card p-3">
+    <h5>Add Category</h5>
+    <form method="post">
+      <div class="mb-2"><input class="form-control" name="category_name" placeholder="Category name *" required></div>
+      <div class="mb-2"><input class="form-control" name="description" placeholder="Description"></div>
+      <button class="btn btn-primary">Add</button>
+    </form></div></div>
+  <div class="col-lg-8"><div class="card p-3">
+    <table class="table align-middle mb-0">
+      <thead><tr><th>ID</th><th>Name</th><th>Description</th><th>Products</th></tr></thead>
+      <tbody>{% for c in categories %}
+        <tr><td>{{ c.category_id }}</td><td>{{ c.category_name }}</td><td>{{ c.description or '' }}</td>
+            <td><a href="{{ url_for('products', category=c.category_id) }}">{{ c.product_count }}</a></td></tr>
+      {% else %}<tr><td colspan="4" class="text-muted">No categories.</td></tr>{% endfor %}</tbody>
+    </table></div></div>
+</div>
+{% endblock %}

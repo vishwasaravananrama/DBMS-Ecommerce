@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}New Order{% endblock %}
+{% block content %}
+<h3 class="mb-3">Create Order</h3>
+<div class="card p-4">
+<form method="post">
+  <div class="mb-3 col-md-6"><label class="form-label">Customer *</label>
+    <select class="form-select" name="customer_id" required>
+      <option value="">-- select customer --</option>
+      {% for c in customers %}<option value="{{ c.customer_id }}">{{ c.customer_name }}</option>{% endfor %}
+    </select></div>
+
+  <label class="form-label">Items *</label>
+  <div id="rows"></div>
+  <button type="button" class="btn btn-sm btn-outline-primary mb-3" onclick="addRow()">+ Add another product</button>
+
+  <div class="fs-5 mb-3">Order Total: <b>₹<span id="total">0.00</span></b></div>
+  <button class="btn btn-success">Place Order</button>
+  <a class="btn btn-outline-secondary" href="{{ url_for('orders') }}">Cancel</a>
+</form>
+</div>
+
+<template id="rowTpl">
+  <div class="row g-2 mb-2 item-row">
+    <div class="col-md-7">
+      <select class="form-select prod" name="product_id" onchange="calc()">
+        <option value="">-- select product --</option>
+        {% for p in products %}<option value="{{ p.product_id }}" data-price="{{ p.price }}" data-stock="{{ p.stock_quantity }}">{{ p.product_name }} — ₹{{ p.price }} (stock: {{ p.stock_quantity }})</option>{% endfor %}
+      </select>
+    </div>
+    <div class="col-md-3"><input class="form-control qty" type="number" name="quantity" min="1" value="1" oninput="calc()"></div>
+    <div class="col-md-2"><button type="button" class="btn btn-outline-danger w-100" onclick="this.closest('.item-row').remove(); calc();">Remove</button></div>
+  </div>
+</template>
+{% endblock %}
+{% block scripts %}
+<script>
+function addRow() {
+  document.getElementById('rows').appendChild(document.getElementById('rowTpl').content.cloneNode(true));
+}
+function calc() {
+  let total = 0;
+  document.querySelectorAll('.item-row').forEach(r => {
+    const opt = r.querySelector('.prod').selectedOptions[0];
+    const qty = parseInt(r.querySelector('.qty').value) || 0;
+    if (opt && opt.dataset.price) total += parseFloat(opt.dataset.price) * qty;
+  });
+  document.getElementById('total').textContent = total.toFixed(2);
+}
+addRow();
+</script>
+{% endblock %}
